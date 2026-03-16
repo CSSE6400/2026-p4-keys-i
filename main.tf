@@ -48,18 +48,26 @@ resource "aws_security_group" "hextris-server" {
 
 # EC2 instance
 resource "aws_instance" "hextris-server" {
- ami = data.aws_ami.latest.id
- instance_type = "t2.micro"
- key_name = "vockey"
- user_data = file("./serve-heutrix.sh")
- security_groups = [aws_security_group.hextris-server.name]
+   ami = "ami-0c421724a94bba6d6"
+   instance_type = "t2.micro"
+   key_name = "vockey"
+   security_groups = [aws_security_group.hextris-server.name]
+   user_data = <<-EOF
+   #!/bin/bash
+   yum install -y httpd
+   systemctl enable httpd
+   systemctl start httpd
 
- tags = {
-   Name = "hextris"
- }
+   yum install -y git
+   cd /var/www/html
+   git clone https://github.com/Hextris/hextris .
+   EOF
+
+   tags = {
+      Name = "hextris"
+   }
 }
 
-# using ami to deploy images
 data "aws_ami" "latest" {
  most_recent = true
  owners = ["amazon"]
