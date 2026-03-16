@@ -48,15 +48,41 @@ resource "aws_security_group" "hextris-server" {
 
 # EC2 instance
 resource "aws_instance" "hextris-server" {
-   ami = "ami-0c421724a94bba6d6"
-   instance_type = "t2.micro"
-   key_name = "vockey"
-   security_groups = [aws_security_group.hextris-server.name]
-  user_data = file("./serve-hextris.sh")
+ ami = data.aws_ami.latest.id
+ instance_type = "t2.micro"
+ key_name = "vockey"
+ user_data = file("./serve-hextris.sh")
+ security_groups = [aws_security_group.hextris-server.name]
 
-   tags = {
-      Name = "hextris"
-   }
+ tags = {
+   Name = "hextris"
+ }
+}
+
+# using ami to deploy images
+data "aws_ami" "latest" {
+ most_recent = true
+ owners = ["amazon"]
+
+ filter {
+   name = "name"
+   values = ["al2023-ami-2023*"]
+ }
+
+ filter {
+   name = "root-device-type"
+   values = ["ebs"]
+ }
+
+ filter {
+   name = "virtualization-type"
+   values = ["hvm"]
+ }
+
+ filter {
+   name = "architecture"
+   values = ["x86_64"]
+ }
 }
 
 # output
