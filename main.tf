@@ -24,6 +24,7 @@ resource "aws_instance" "hextris-server" {
    instance_type = "t2.micro"
    key_name = "vockey"
    security_groups = [aws_security_group.hextris-server.name]
+  user_data = file("./serve-hextris.sh")
 
    tags = {
       Name = "hextris"
