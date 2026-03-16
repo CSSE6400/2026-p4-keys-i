@@ -18,3 +18,18 @@ provider "aws" {
     }
   }
 }
+
+resource "aws_instance" "hextris-server" {
+   ami = "ami-0c421724a94bba6d6"
+   instance_type = "t2.micro"
+   key_name = "vockey"
+   security_groups = [aws_security_group.hextris-server.name]
+
+   tags = {
+      Name = "hextris"
+   }
+}
+
+output "hextris-url" {
+ value = aws_instance.hextris-server.public_ip
+}
